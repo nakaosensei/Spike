@@ -15,7 +15,7 @@ Buzzer - Arduino Port 3
 
 Also, this components should run using 3V-5V range for VCC, connect the energy VCC/GND pins from the components as you want.  
 
-Now you can connect the USB cable from the arduino on the computer, open the Arduino Genuino IDE, you must make a program that reads the   input the arduino  
+Now you can connect the USB cable from the arduino on the computer, open the Arduino Genuino IDE, you must make a program that reads the   input the arduino
 get's in the 3 sensors and active the buzzer, additionally, it's necessary to write which alarm fired in the Serial, because the Java
 application will get the arduino input from there.  
 You can see the code that i used in this application by opening this file in arduino genuino ide:
