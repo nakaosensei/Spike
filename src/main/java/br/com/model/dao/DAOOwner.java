@@ -30,11 +30,14 @@ public class DAOOwner extends DAOGenerico<Houseowner>{
     }
     
     public Houseowner find(String mail){
-        TypedQuery<Houseowner> query = em.createQuery("SELECT c FROM "+Houseowner.class.getSimpleName()+" AS C WHERE C.ownerMail like ':mail'", Houseowner.class);
-        query.setParameter("mail", mail);
+        System.out.println(mail);
+        TypedQuery<Houseowner> query = em.createQuery("SELECT c FROM "+Houseowner.class.getSimpleName()+" AS C WHERE C.ownerMail = :email", Houseowner.class);
+        query.setParameter("email", mail);
+        
         List<Houseowner> result = query.getResultList();
+        
         if(result.size()==1){
-            result.get(0);
+            return result.get(0);
         }
         return null;
     };

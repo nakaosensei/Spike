@@ -14,14 +14,12 @@ import java.util.List;
 public class Test {
     
     public static void main(String[] args) throws IOException {
-        ArduinoBridge ab = new ArduinoBridge();
-        ab.initialize();
-        ab.turnOn();
-        /*DAOAlarmEvent dao = new DAOAlarmEvent();
+        
+        DAOAlarmEvent dao = new DAOAlarmEvent();
         List<Alarmevent> e =  dao.getEventListFromAlarm(1);
         for(Alarmevent a:e){
             System.out.println(a.getAlarmId());
             a.print();
-        }*/
+        }
     }    
 }

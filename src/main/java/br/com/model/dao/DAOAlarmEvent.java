@@ -25,7 +25,7 @@ public class DAOAlarmEvent extends DAOGenerico<Alarmevent>{
     }
     
    public List<Alarmevent> getEventListFromAdress(int addressId){
-        TypedQuery<Alarmevent> query = em.createQuery("SELECT c FROM "+Alarmevent.class.getSimpleName()+" AS C WHERE C.alarmId.addressId.addressId = :adressId ORDER BY C.actionDate,C.actionTime DESC", Alarmevent.class);
+        TypedQuery<Alarmevent> query = em.createQuery("SELECT c FROM "+Alarmevent.class.getSimpleName()+" AS C WHERE C.alarmId.addressId.addressId = :addressId ORDER BY C.actionDate,C.actionTime DESC", Alarmevent.class);
         query.setParameter("addressId", addressId);        
         return query.getResultList();  
     }

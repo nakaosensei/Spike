@@ -8,6 +8,6 @@ import static spark.Spark.*;
  */
 public class HelloWorld {
     public static void main(String[] args) {
-        get("/hello",(req,res)->Arquivo.lerArquivo("../../view/login.html"));
+        get("/home",(req,res)->Arquivo.lerArquivo("src/main/java/br/com/view/login.html"));
     }
 }

@@ -30,7 +30,7 @@ public class InterfaceController {
         while(!input.equals("2")){
             System.out.println("1-Exibir disparos recentes dos alarmes");
             System.out.println("2-Exibir sequencia de disparo");
-            System.out.println("2-Sair");
+            System.out.println("3-Sair");
             input = Integer.parseInt(in.nextLine());
             switch(input){
                 case 1:
@@ -39,10 +39,11 @@ public class InterfaceController {
                     }                    
                     break;
                 case 2:
-                    
-                    break;
-                case 3:
-                    break;
+                    List<Alarmevent> events = daoE.getEventListFromAdress(1);
+                    for(Alarmevent e:events){
+                        e.print();
+                    }
+                    break;                
                 default:
                     break;
             }                
