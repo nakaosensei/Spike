@@ -26,19 +26,19 @@ public class InterfaceController {
         Scanner in = new Scanner(System.in);
         Houseowner owner = daoO.find("nakaosensei@gmail.com");
         owner.print();
-        Integer input=0;
-        while(!input.equals("2")){
+        String input="0";
+        while(!input.equals("3")){
             System.out.println("1-Exibir disparos recentes dos alarmes");
             System.out.println("2-Exibir sequencia de disparo");
             System.out.println("3-Sair");
-            input = Integer.parseInt(in.nextLine());
+            input = (in.nextLine());
             switch(input){
-                case 1:
+                case "1":
                     for(Address s:owner.getAddressList()){
                         s.print(daoE);
                     }                    
                     break;
-                case 2:
+                case "2":
                     List<Alarmevent> events = daoE.getEventListFromAdress(1);
                     for(Alarmevent e:events){
                         e.print();

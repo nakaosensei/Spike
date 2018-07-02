@@ -1,6 +1,5 @@
 package br.com.controller;
 
-
 import br.com.model.Address;
 import br.com.model.Alarm;
 import br.com.model.Alarmevent;
@@ -18,7 +17,7 @@ import gnu.io.CommPortIdentifier;
 import gnu.io.SerialPort;
 import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
-import java.io.File;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;

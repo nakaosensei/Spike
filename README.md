@@ -1,5 +1,13 @@
 # Spike
-A simple arduino project with 3 movement sensors, one buzzer that send's an email to a client in case the sensors detect movement, the idea is to simulate an alarm system. Additionaly, it will be possible to access the information about the alarm fire sequence of this prototype through console.
+Copyright 2018 MIT
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+This is a simple arduino project with 3 movement sensors, one buzzer that send's an email to a client in case the sensors detect movement, the idea is to simulate an alarm system. Additionaly, it will be possible to access the information about the alarm fire sequence of this prototype through console.
 
 This is a project that should not consume much of your time if do you want to reproduce it, to do it you will need:
 1x Arduino Uno
@@ -103,7 +111,109 @@ void playSong(){
     delay(50);               
 }
 
-Not that you made your arduino code, let's create a Java application that can read the result's write in the Serial port, 
+Not that you made your arduino code, let's create a Java application that can read the result's write in the Serial port, for that you will need the following external jars:
+1x rxtxcomm.jar
+1x Mysql connector 5.1.39(can be any acctualy, i used this one).
+1x eclipselink persistence
+1x javax.mail
+1x javax.activation
+
+The most of theese can be easily downloaded through Maven, add the following to your pom.xml
+<dependencies>
+    <dependency>
+        <groupId>rxtxcomm</groupId>
+        <artifactId>rxtxcomm</artifactId>
+        <version>1.0</version>
+    </dependency>
+    <dependency>
+       <groupId>org.eclipse.persistence</groupId>
+       <artifactId>eclipselink</artifactId>
+       <version>2.5.2</version>
+    </dependency>
+    <dependency>
+        <groupId>org.eclipse.persistence</groupId>
+        <artifactId>org.eclipse.persistence.jpa.modelgen.processor</artifactId>
+        <version>2.5.2</version>
+        <scope>provided</scope>
+    </dependency>
+    <dependency>
+        <groupId>com.sparkjava</groupId>
+        <artifactId>spark-core</artifactId>
+        <version>2.7.2</version>
+    </dependency>
+    <dependency>
+        <groupId>mysql</groupId>
+         <artifactId>mysql-connector-java</artifactId>
+         <version>5.1.39</version>
+    </dependency>
+    <dependency>
+        <groupId>javax.mail</groupId>
+         <artifactId>mail</artifactId>
+         <version>1.4</version>
+     </dependency>
+     <dependency>
+         <groupId>javax.activation</groupId>
+         <artifactId>activation</artifactId>
+         <version>1.1.1</version>
+     </dependency>
+</dependencies>
+
+Well, the only problem will be the rxtxcomm, witch you should find the jar in you operacional system, to do that, follow this tutorial:
+https://docs.google.com/document/d/e/2PACX-1vQSTA9ZHnrKgeJIDlze04O_JAbpYKKXLcbh5tQu3UCxhoALRafSE8F3VKDWZuFU6UO_Qv5mNnOC7ncX/pub
+
+Also, we will save the fire alarm in a database, for that, use the script Database to create the database used in this application.
+
+The database contain 4 tables, they are:
+ALARMEVENT -> Saves the fire alarm history
+ALARM -> Indetification for each movement sensor, each alarm can have many alarm events, but each event can only have one alarm
+ADDRESS -> Address location, one address can have many alarms, but each alarm resides in just one address
+HOUSEOWNER -> Contains information about the owner of an address, his informations will be used to send an email when some alarm
+fire, one owner can have many adresses, and one address is tied to one owner.
+
+Now, ,create a java application in your favorite IDE, if you are using maven, add the dependencies described in your pom.xml and add the rxtx jar, if you're not using maven, download all the jars and add then to your project.
+
+The first thing we've gotta do is to get the information written in the Serial port by the Arduino, to do that we will use the ArduinoBridge class, open it.
+
+As you can see, this class implements SerialPortEventListener, first it tries to find out what Serial port are you using in a while structure, then when it find's out, it instantiates the class serial port, after that it also instantiate the class inputStream reader that will be
+used later. NOTE: BEFORE ANYTHING, YOU SHOULD CALL THE INITIALIZE() METHOD.
+
+Note that there is another big method in this class, called serialEvent, we programed it to react to every change in the Serial port we are listening to, here is where we get the information that the arduino sent to us, each time an alarm fires, it print's it's number in the serial, so here we obtain it's id, get the datetime and register an alarmEvent in the ALARMEVENT table for that alarm/date, also, we send
+an email to the owner of the address witch has that alarm that fired.
+
+Well, sending the email was really easy through the Mail class, all you have to do is to set the SMTP parameters and use POP, i've implemented
+a send mail method that uses the default email nksecuresystem@gmail.com, an email that i created just for this project.
+
+You will also note that there is Java objects and DAO's to access the database, this is because i used a persistence unity to access the database, basically i've created the Java classes with the correct annotations, created the persistence unity, configured it with my database credentials, and did it. Later on, i've used a class called DAOGenerico, this class uses the persistence unity to access any Object refering to the database, but i extended a single DAOVersion for each one of our for tables, so we've got:
+DAOAddress
+DAOAlarm
+DAOOwner
+DAOAlarmEvent
+
+If you decide to look in theese, you will see that some of them have some methods to get some information in the database, for example, DAOOwner has an method called login that check's if there is a determined mail/pw in the database, and returns the object if it exists, i used JQPL to make those queries.
+
+Well, now we have a system that everytime an alarm fires, it send's an email to the owner of the address where the alarm fired, it also activates the buzzer but that is just to denotate what should happen in real life, but we still can't do anything with the information stored in the database, se let's make an simple interface where we retrieve some information about it, like the last time an alarm fired and also the sequence witch they fired for an Address, for that, check the InterfaceController class, there i've implemented a simple text/console interface where you can get the fire alarm information for a specific user, in this case, myself.
+
+Please note, before running the  InterfaceController main method, you should run the fillDatabase method from DatabaseFiller class, this project have a structure that could support a level where there is many alarms in a lot of adresses, and each house has a owner with an login and password, where he can choose an address and then see for each of them, witch alarm fired at what time, but this has not been yet implemented, for that i would probably use an web interface instead of a simple console interface for demonstration.
+
+There is nothing complex here, there is an old-fashioned menu where you can choose to show the alarms from the addresses that the user nakaosensei@gmail.com has(that should be just one address, with 3 alarms/sensors), also, the second option displays the fire sequence from the alarms.
+
+And DONE! Now you have a system that stores the alarm fire in a mysql Database, send an email warning the houseowner that the alarm of his house fired, and also can check the fire sequence. Hurray =).
+
+
+
+
+ 
+ 
+
+
+
+ 
+
+
+
+
+
+
 
 
 
