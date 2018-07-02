@@ -41,7 +41,7 @@ The database contain 4 tables, they are:
 ALARMEVENT -> Saves the fire alarm history  
 ALARM -> Identification for each movement sensor, each alarm can have many alarm events, but each event can only have one alarm  
 ADDRESS -> Address location, one address can have many alarms, but each alarm resides in just one address  
-HOUSEOWNER -> Contains information about the owner of an address, his informations will be used to send an email when some alarm  
+HOUSEOWNER -> Contains information about the owner of an address, his informations will be used to send an email when some alarm
 fire, one owner can have many addresses, and one address is tied to one owner.  
 
 Now, ,create a java application in your favourite IDE, if you are using maven, add the dependencies described in your pom.xml and add the rxtx jar, if you're not using maven, download all the jars and add then to your project.  
